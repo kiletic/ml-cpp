@@ -9,7 +9,7 @@ struct Value {
   scalar_t data;
   scalar_t grad;
   std::function<void()> propagate_grad;  
-  std::vector<std::shared_ptr<Value>> children; 
+  std::vector<Value*> children; 
 
   Value(scalar_t _data) : data(_data), grad(0.0), propagate_grad([](){}) {}
 
