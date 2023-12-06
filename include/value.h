@@ -1,21 +1,30 @@
 #pragma once
+
 #include <functional>
 #include <iostream>
 #include <memory>
 
 using scalar_t = double;
 
-struct Value {
+struct ValueInternal {
   scalar_t data;
   scalar_t grad;
   std::function<void()> propagate_grad;  
-  std::vector<Value*> children; 
+  std::vector<std::shared_ptr<ValueInternal>> children; 
 
-  Value(scalar_t _data) : data(_data), grad(0.0), propagate_grad([](){}) {}
+  ValueInternal(scalar_t _data) : data(_data), grad(0), propagate_grad([](){}), children({}) {}
+};
 
-  Value operator+(Value &other);
-  Value operator*(Value &other);
+struct Value {
+  std::shared_ptr<ValueInternal> internal;
 
+  Value(scalar_t);
+
+  Value operator+(Value const &other);
+  Value operator*(Value const &other);
+
+  scalar_t get_data() const;
+  scalar_t get_grad() const;
   void backward();
 
   friend std::ostream& operator<<(std::ostream& out, Value const &val); 
