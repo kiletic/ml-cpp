@@ -17,7 +17,7 @@ scalar_t Value::get_grad() const {
 
 Value Value::operator+(Value const &other) {
   Value ret{this->get_data() + other.get_data()};
-  // TODO: why is it memory leaking when capturing without get()?
+  // TODO: why is it memory leaking when capturing without get() and why it segfaults when capturing by reference (the smart ptr)?
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
                                   other_internal = other.internal.get(),
                                   ret_internal   = ret.internal.get()]() -> void {

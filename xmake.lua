@@ -10,6 +10,7 @@ if is_mode("debug") then
 end
 
 add_requires("gtest", { configs = { main = true }})
+add_requires("libtorch")
 
 target("value")
   set_kind("static")
@@ -18,7 +19,8 @@ target("value")
 target("test")
   set_default(false)
   set_kind("binary")
-  add_packages("gtest", "gtest_main")
+  add_packages("gtest", "gtest_main", "libtorch")
+  add_deps("value")
   add_files("tests/*.cpp")
   if is_mode("debug") then
     add_ldflags("-fsanitize=address", "-fsanitize=undefined")
