@@ -64,6 +64,31 @@ Value Value::operator*(Value const &other) {
   return ret;
 }
 
+// val1 / val2
+Value Value::operator/(Value const &other) {
+  // z = x / y
+  // df/dz
+  // df/dx = df/dz * dz/dx
+  // df/dy = df/dz * dz/dy
+  // dz/dx = d(x * (y^-1)) / dx
+  //       = y^-1
+  // dz/dy = d(x * (y^-1)) / dy 
+  //       = x * (y^-2) * -1
+  //       = -x/y^2
+  // x = *this
+  // y = other
+  Value ret{this->get_data() / other.get_data()};
+  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
+                                  other_internal = other.internal.get(),
+                                  ret_internal   = ret.internal.get()]() -> void {
+    this_internal->grad += ret_internal->grad / other_internal->data; 
+    other_internal->grad += ret_internal->grad * (-this_internal->data / (other_internal->data * other_internal->data)); 
+  };
+  ret.internal->children.push_back(this->internal);
+  ret.internal->children.push_back(other.internal);
+  return ret;
+}
+
 void Value::backward() {
   auto topological_sort = [](ValueInternal *starting_value) -> std::vector<ValueInternal*> { 
     std::vector<ValueInternal*> topo;
