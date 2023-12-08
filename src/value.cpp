@@ -121,20 +121,23 @@ Value Value::cos() {
 }
 
 Value Value::exp() {
-  Value ret{std::exp(this->get_data())};
+  auto exp_ = std::exp(this->get_data());
+  Value ret{exp_};
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
-                                  ret_internal   = ret.internal.get()]() -> void {
-    this_internal->grad += ret_internal->grad * std::exp(this_internal->data); 
+                                  ret_internal   = ret.internal.get(),
+                                  exp_]() -> void {
+    this_internal->grad += ret_internal->grad * exp_; 
   };
   ret.internal->children.push_back(this->internal);
   return ret;
 }
 
 Value Value::tanh() {
-  Value ret{std::tanh(this->get_data())};
+  auto tanh_ = std::tanh(this->get_data());
+  Value ret{tanh_};
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
-                                  ret_internal   = ret.internal.get()]() -> void {
-    auto tanh_ = std::tanh(this_internal->data);
+                                  ret_internal   = ret.internal.get(),
+                                  tanh_]() -> void {
     auto tanh_sqr = tanh_ * tanh_;
     this_internal->grad += ret_internal->grad * (1 - tanh_sqr); 
   };
