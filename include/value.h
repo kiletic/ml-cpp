@@ -30,6 +30,7 @@ struct Value {
   Value operator/(Value const &other);
 
   Value sin();
+  Value cos();
 
   scalar_t get_data() const;
   scalar_t get_grad() const;

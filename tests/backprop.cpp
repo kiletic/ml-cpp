@@ -264,11 +264,45 @@ TEST(Backprop, Sin) {
 TEST(Backprop, Sin2) {
   Value a{2.213213};
   Value b{3.137127};
-  Value ab = (b * (a.sin() + 5) * b.sin()).sin();
+  Value ab = (b * (a.sin().sin() + 5) * b.sin()).sin().sin();
 
   torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
   torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
-  auto t_ab = (t_b * (t_a.sin() + 5) * t_b.sin()).sin();
+  auto t_ab = (t_b * (t_a.sin().sin() + 5) * t_b.sin()).sin().sin();
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
+
+TEST(Backprop, Cos) {
+  Value a{2.0};
+  Value b{3.0};
+  Value ab = (a.cos() * b.cos()).cos();
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = (t_a.cos() * t_b.cos()).cos();
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
+
+TEST(Backprop, Cos2) {
+  Value a{2.213213};
+  Value b{3.137127};
+  Value ab = (b * (a.cos().cos() + 5) * b.cos()).cos().cos();
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = (t_b * (t_a.cos().cos() + 5) * t_b.cos()).cos().cos();
 
   ab.backward();
   t_ab.backward();

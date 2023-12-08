@@ -110,6 +110,16 @@ Value Value::sin() {
   return ret;
 }
 
+Value Value::cos() {
+  Value ret{std::cos(this->get_data())};
+  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
+                                  ret_internal   = ret.internal.get()]() -> void {
+    this_internal->grad += ret_internal->grad * -(std::sin(this_internal->data)); 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
 void Value::backward() {
   auto topological_sort = [](ValueInternal *starting_value) -> std::vector<ValueInternal*> { 
     std::vector<ValueInternal*> topo;
