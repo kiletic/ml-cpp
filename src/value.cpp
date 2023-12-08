@@ -130,6 +130,18 @@ Value Value::exp() {
   return ret;
 }
 
+Value Value::tanh() {
+  Value ret{std::tanh(this->get_data())};
+  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
+                                  ret_internal   = ret.internal.get()]() -> void {
+    auto tanh_ = std::tanh(this_internal->data);
+    auto tanh_sqr = tanh_ * tanh_;
+    this_internal->grad += ret_internal->grad * (1 - tanh_sqr); 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
 void Value::backward() {
   auto topological_sort = [](ValueInternal *starting_value) -> std::vector<ValueInternal*> { 
     std::vector<ValueInternal*> topo;

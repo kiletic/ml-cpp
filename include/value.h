@@ -32,6 +32,7 @@ struct Value {
   Value sin();
   Value cos();
   Value exp();
+  Value tanh();
 
   scalar_t get_data() const;
   scalar_t get_grad() const;
