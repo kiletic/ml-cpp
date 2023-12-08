@@ -64,6 +64,16 @@ Value Value::operator*(Value const &other) {
   return ret;
 }
 
+// val / [number] 
+Value Value::operator/(scalar_t scalar) {
+  return *this / Value{scalar};
+}
+
+// [number] / val
+Value operator/(scalar_t scalar, Value const &other) {
+  return Value{scalar} / other; 
+}
+
 // val1 / val2
 Value Value::operator/(Value const &other) {
   // z = x / y

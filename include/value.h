@@ -38,3 +38,4 @@ struct Value {
 
 Value operator+(scalar_t scalar, Value const &val); 
 Value operator*(scalar_t scalar, Value const &val); 
+Value operator/(scalar_t scalar, Value const &val); 
