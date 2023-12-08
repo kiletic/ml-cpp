@@ -29,6 +29,8 @@ struct Value {
   Value operator/(scalar_t scalar);
   Value operator/(Value const &other);
 
+  Value sin();
+
   scalar_t get_data() const;
   scalar_t get_grad() const;
   void backward();

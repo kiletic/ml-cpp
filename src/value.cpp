@@ -1,3 +1,4 @@
+#include <cmath>
 #include <set>
 #include <memory>
 
@@ -99,11 +100,21 @@ Value Value::operator/(Value const &other) {
   return ret;
 }
 
+Value Value::sin() {
+  Value ret{std::sin(this->get_data())};
+  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
+                                  ret_internal   = ret.internal.get()]() -> void {
+    this_internal->grad += ret_internal->grad * std::cos(this_internal->data); 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
 void Value::backward() {
   auto topological_sort = [](ValueInternal *starting_value) -> std::vector<ValueInternal*> { 
     std::vector<ValueInternal*> topo;
     std::set<ValueInternal*> visited;
-    auto dfs = [&](auto self, ValueInternal *u) -> void {
+    auto dfs = [&topo, &visited](auto self, ValueInternal *u) -> void {
       visited.insert(u);
       for (std::shared_ptr<ValueInternal> v : u->children) 
         if (visited.find(v.get()) == end(visited))
