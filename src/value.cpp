@@ -41,6 +41,30 @@ Value Value::operator+(Value const &other) {
   return ret;
 }
 
+// val - [number]
+Value Value::operator-(scalar_t scalar) {
+  return *this + Value{-scalar};
+}
+
+// [number] - val
+Value operator-(scalar_t scalar, Value const &val) {
+  return Value{scalar} - val;
+}
+
+// val1 - val2
+Value Value::operator-(Value const &other) {
+  Value ret{this->get_data() - other.get_data()};
+  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
+                                  other_internal = other.internal.get(),
+                                  ret_internal   = ret.internal.get()]() -> void {
+    other_internal->grad -= ret_internal->grad; 
+    this_internal->grad += ret_internal->grad; 
+  };
+  ret.internal->children.push_back(this->internal);
+  ret.internal->children.push_back(other.internal);
+  return ret;
+}
+
 // val * [number]
 Value Value::operator*(scalar_t scalar) {
   return *this * Value{scalar};
@@ -102,8 +126,8 @@ Value Value::operator/(Value const &other) {
 
 Value Value::sin() {
   Value ret{std::sin(this->get_data())};
-  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
-                                  ret_internal   = ret.internal.get()]() -> void {
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get()]() -> void {
     this_internal->grad += ret_internal->grad * std::cos(this_internal->data); 
   };
   ret.internal->children.push_back(this->internal);
@@ -112,8 +136,8 @@ Value Value::sin() {
 
 Value Value::cos() {
   Value ret{std::cos(this->get_data())};
-  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
-                                  ret_internal   = ret.internal.get()]() -> void {
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get()]() -> void {
     this_internal->grad += ret_internal->grad * -std::sin(this_internal->data); 
   };
   ret.internal->children.push_back(this->internal);
@@ -123,8 +147,8 @@ Value Value::cos() {
 Value Value::exp() {
   auto exp_ = std::exp(this->get_data());
   Value ret{exp_};
-  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
-                                  ret_internal   = ret.internal.get(),
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get(),
                                   exp_]() -> void {
     this_internal->grad += ret_internal->grad * exp_; 
   };
@@ -135,11 +159,23 @@ Value Value::exp() {
 Value Value::tanh() {
   auto tanh_ = std::tanh(this->get_data());
   Value ret{tanh_};
-  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
-                                  ret_internal   = ret.internal.get(),
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get(),
                                   tanh_]() -> void {
     auto tanh_sqr = tanh_ * tanh_;
     this_internal->grad += ret_internal->grad * (1 - tanh_sqr); 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
+Value Value::relu() {
+  auto relu_ = std::max<scalar_t>(0, this->get_data()); 
+  Value ret{relu_};
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get(),
+                                  relu_]() -> void {
+    this_internal->grad += ret_internal->grad * (relu_ > 0 ? 1 : 0); 
   };
   ret.internal->children.push_back(this->internal);
   return ret;

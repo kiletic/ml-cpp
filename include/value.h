@@ -23,6 +23,9 @@ struct Value {
   Value operator+(scalar_t scalar);
   Value operator+(Value const &other);
 
+  Value operator-(scalar_t scalar);
+  Value operator-(Value const &other);
+
   Value operator*(scalar_t scalar);
   Value operator*(Value const &other);
 
@@ -33,6 +36,7 @@ struct Value {
   Value cos();
   Value exp();
   Value tanh();
+  Value relu();
 
   scalar_t get_data() const;
   scalar_t get_grad() const;
@@ -42,5 +46,6 @@ struct Value {
 };
 
 Value operator+(scalar_t scalar, Value const &val); 
+Value operator-(scalar_t scalar, Value const &val); 
 Value operator*(scalar_t scalar, Value const &val); 
 Value operator/(scalar_t scalar, Value const &val); 
