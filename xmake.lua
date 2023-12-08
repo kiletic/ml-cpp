@@ -26,6 +26,14 @@ target("test")
     add_ldflags("-fsanitize=address", "-fsanitize=undefined")
   end
 
+target("example_xor")
+  set_kind("binary")
+  add_deps("value")
+  add_files("examples/xor.cpp")
+  if is_mode("debug") then
+    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
+  end
+
 target("main")
   set_kind("binary")
   add_deps("value")

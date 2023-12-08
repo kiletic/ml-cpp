@@ -4,6 +4,10 @@
 
 #include "value.h"
 
+Value::Value() {
+  this->internal = std::make_shared<ValueInternal>((scalar_t)std::rand() / RAND_MAX);
+} 
+
 Value::Value(scalar_t val) {
   this->internal = std::make_shared<ValueInternal>(val);
 } 
@@ -14,6 +18,10 @@ scalar_t Value::get_data() const {
 
 scalar_t Value::get_grad() const {
   return this->internal->grad;
+}
+
+void Value::set_data(scalar_t new_data) const {
+  this->internal->data = new_data;
 }
 
 // val + [number]
@@ -182,23 +190,27 @@ Value Value::relu() {
 }
 
 void Value::backward() {
-  auto topological_sort = [](ValueInternal *starting_value) -> std::vector<ValueInternal*> { 
+  auto topological_sort = [](ValueInternal *start_node) -> std::vector<ValueInternal*> { 
     std::vector<ValueInternal*> topo;
     std::set<ValueInternal*> visited;
     auto dfs = [&topo, &visited](auto self, ValueInternal *u) -> void {
       visited.insert(u);
       for (std::shared_ptr<ValueInternal> v : u->children) 
-        if (visited.find(v.get()) == end(visited))
+        if (!visited.contains(v.get()))
           self(self, v.get());
       topo.push_back(u);
     };
 
-    dfs(dfs, starting_value);
+    dfs(dfs, start_node);
     return topo;
   };
 
-  this->internal->grad = 1.0;
   auto topo = topological_sort(this->internal.get());
+  // maybe decouple zero_grad and backward in the future
+  for (ValueInternal *u : topo)
+    u->grad = 0;
+
+  this->internal->grad = 1.0;
   std::reverse(begin(topo), end(topo));
   for (ValueInternal *u : topo)
     u->propagate_grad();

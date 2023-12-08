@@ -18,6 +18,7 @@ struct ValueInternal {
 struct Value {
   std::shared_ptr<ValueInternal> internal;
 
+  Value();
   Value(scalar_t);
 
   Value operator+(scalar_t scalar);
@@ -40,6 +41,7 @@ struct Value {
 
   scalar_t get_data() const;
   scalar_t get_grad() const;
+  void set_data(scalar_t) const;
   void backward();
 
   friend std::ostream& operator<<(std::ostream& out, Value const &val); 
