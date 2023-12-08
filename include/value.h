@@ -20,7 +20,10 @@ struct Value {
 
   Value(scalar_t);
 
+  Value operator+(scalar_t scalar);
   Value operator+(Value const &other);
+
+  Value operator*(scalar_t scalar);
   Value operator*(Value const &other);
 
   scalar_t get_data() const;
@@ -29,3 +32,6 @@ struct Value {
 
   friend std::ostream& operator<<(std::ostream& out, Value const &val); 
 };
+
+Value operator+(scalar_t scalar, Value const &val); 
+Value operator*(scalar_t scalar, Value const &val); 
