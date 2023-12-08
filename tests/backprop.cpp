@@ -22,6 +22,23 @@ TEST(Backprop, Add) {
   EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
 }
 
+TEST(Backprop, AddSelf) {
+  Value a{2.0};
+  Value b{3.0};
+  Value ab = a + a + a + b + b + a + b;
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = t_a + t_a + t_a + t_b + t_b + t_a + t_b;
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
+
 TEST(Backprop, Add2) {
   Value a{2.1};
   Value b{3.1};
@@ -47,6 +64,24 @@ TEST(Backprop, Mult) {
   torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
   torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
   auto t_ab = t_a * t_b;
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
+
+
+TEST(Backprop, MultSelf) {
+  Value a{2.0};
+  Value b{3.0};
+  Value ab = a * a * a * b * b * a * b;
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = t_a * t_a * t_a * t_b * t_b * t_a * t_b;
 
   ab.backward();
   t_ab.backward();
@@ -149,6 +184,23 @@ TEST(Backprop, Div) {
   torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
   torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
   auto t_ab = t_a / t_b;
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
+
+TEST(Backprop, DivSelf) {
+  Value a{2.0};
+  Value b{3.0};
+  Value ab = a / a / b / b / a / b;
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = t_a / t_a / t_b / t_b / t_a / t_b;
 
   ab.backward();
   t_ab.backward();
