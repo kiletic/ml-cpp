@@ -31,6 +31,7 @@ struct Value {
 
   Value sin();
   Value cos();
+  Value exp();
 
   scalar_t get_data() const;
   scalar_t get_grad() const;

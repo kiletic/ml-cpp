@@ -114,7 +114,17 @@ Value Value::cos() {
   Value ret{std::cos(this->get_data())};
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
                                   ret_internal   = ret.internal.get()]() -> void {
-    this_internal->grad += ret_internal->grad * -(std::sin(this_internal->data)); 
+    this_internal->grad += ret_internal->grad * -std::sin(this_internal->data); 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
+Value Value::exp() {
+  Value ret{std::exp(this->get_data())};
+  ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
+                                  ret_internal   = ret.internal.get()]() -> void {
+    this_internal->grad += ret_internal->grad * std::exp(this_internal->data); 
   };
   ret.internal->children.push_back(this->internal);
   return ret;

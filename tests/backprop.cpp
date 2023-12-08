@@ -311,3 +311,37 @@ TEST(Backprop, Cos2) {
   EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
   EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
 }
+
+TEST(Backprop, Exp) {
+  Value a{2.0};
+  Value b{3.0};
+  Value ab = a.exp() * b.exp();
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = t_a.exp() * t_b.exp();
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
+
+TEST(Backprop, Exp2) {
+  Value a{0.813213};
+  Value b{1.137127};
+  Value ab = b * a.exp().exp() * b.exp();
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = t_b * t_a.exp().exp() * t_b.exp();
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
