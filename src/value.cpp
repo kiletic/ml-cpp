@@ -169,8 +169,7 @@ Value Value::tanh() {
   Value ret{tanh_};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
                                   ret_internal  = ret.internal.get(),
-                                  tanh_]() -> void {
-    auto tanh_sqr = tanh_ * tanh_;
+                                  tanh_sqr      = tanh_ * tanh_]() -> void {
     this_internal->grad += ret_internal->grad * (1 - tanh_sqr); 
   };
   ret.internal->children.push_back(this->internal);
@@ -184,6 +183,18 @@ Value Value::relu() {
                                   ret_internal  = ret.internal.get(),
                                   relu_]() -> void {
     this_internal->grad += ret_internal->grad * (relu_ > 0 ? 1 : 0); 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
+Value Value::leaky_relu() {
+  auto relu_ = std::max<scalar_t>(0.1 * this->get_data(), this->get_data()); 
+  Value ret{relu_};
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get(),
+                                  relu_]() -> void {
+    this_internal->grad += ret_internal->grad * (relu_ > 0 ? 1 : 0.1); 
   };
   ret.internal->children.push_back(this->internal);
   return ret;

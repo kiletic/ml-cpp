@@ -38,6 +38,7 @@ struct Value {
   Value exp();
   Value tanh();
   Value relu();
+  Value leaky_relu();
 
   scalar_t get_data() const;
   scalar_t get_grad() const;

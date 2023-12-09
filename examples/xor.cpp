@@ -44,7 +44,7 @@ int main() {
     // zero_grad included
     loss.backward();
 
-    for (auto &param : {w11, w12, w13, w21, w22, w31, w32, b1, b2, b3}) 
+    for (auto const &param : {w11, w12, w13, w21, w22, w31, w32, b1, b2, b3}) 
       param.set_data(param.get_data() - eps * param.get_grad());
   }
 
