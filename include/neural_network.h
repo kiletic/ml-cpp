@@ -15,6 +15,8 @@ struct NeuralNet {
     return *this;
   }
 
+  std::vector<Value> get_parameters();
+
   ValueTensor forward(ValueTensor const&); 
   ValueTensor operator()(ValueTensor const&); 
 };

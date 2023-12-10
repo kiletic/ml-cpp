@@ -39,6 +39,15 @@ target("example_xor")
     add_ldflags("-fsanitize=address", "-fsanitize=undefined")
   end
 
+target("example_xor_nnet")
+  set_default(false)
+  set_kind("binary")
+  add_deps("all")
+  add_files("examples/xor_nnet.cpp")
+  if is_mode("debug") then
+    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
+  end
+
 target("main")
   set_kind("binary")
   add_deps("all")

@@ -16,6 +16,15 @@ ValueTensor LinearLayer::forward(ValueTensor &value_tensor) {
   return output;
 }
 
+std::vector<Value> LinearLayer::get_parameters() {
+  std::vector<Value> params(this->data.in_dim * this->data.out_dim);
+  for (int i = 0; i < this->data.in_dim; i++)
+    for (int j = 0; j < this->data.out_dim; j++)
+      params[j + i * this->data.out_dim] = this->data[i][j];
+
+  return params;
+}
+
 ValueTensor LinearLayer::operator()(ValueTensor &value_tensor) {
   return this->forward(value_tensor);
 }

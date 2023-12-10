@@ -9,7 +9,13 @@ enum ActivationFunc {
 
 template <ActivationFunc activation_func>
 struct ActivationLayer : Layer {
-  ActivationLayer() {}
+  ActivationLayer() { 
+    contains_params = false; 
+  }
+
+  inline std::vector<Value> get_parameters() {
+    return std::vector<Value>{};
+  }
 
   inline ValueTensor forward(ValueTensor &value_tensor) {
     for (Value &value : value_tensor) {

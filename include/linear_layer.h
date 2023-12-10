@@ -9,6 +9,8 @@ struct LinearLayer : Layer {
   ValueTensor data; 
   
   LinearLayer(int _in_dim, int _out_dim);
+
+  std::vector<Value> get_parameters() override; 
   
   ValueTensor forward(ValueTensor&) override;
   ValueTensor operator()(ValueTensor&) override;
