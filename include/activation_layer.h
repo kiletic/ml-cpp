@@ -4,7 +4,9 @@
 #include "value_tensor.h"
 
 enum ActivationFunc {
-  relu, tanh, leaky_relu
+  relu, 
+  tanh, 
+  leaky_relu
 };
 
 template <ActivationFunc activation_func>
@@ -13,7 +15,7 @@ struct ActivationLayer : Layer {
     contains_params = false; 
   }
 
-  inline std::vector<Value> get_parameters() {
+  constexpr std::vector<Value> get_parameters() override {
     return std::vector<Value>{};
   }
 

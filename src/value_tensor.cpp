@@ -8,12 +8,6 @@ ValueTensor::ValueTensor(int _in_dim, int _out_dim, bool set_zero) : in_dim(_in_
   this->tensor.assign(in_dim, std::vector(out_dim, (set_zero ? Value{0} : Value{})));
 }
 
-ValueTensor::ValueTensor(std::initializer_list<scalar_t> s) {
-  this->tensor.assign(1, std::vector<Value>{std::begin(s), std::end(s)});
-  this->in_dim = 1;
-  this->out_dim = s.size();
-}
-
 std::vector<Value>& ValueTensor::operator[](size_t pos) {
   return this->tensor[pos];
 }

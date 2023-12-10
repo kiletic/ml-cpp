@@ -27,9 +27,9 @@ int main() {
     Value loss{0};
     for (int x : {0, 1}) {
       for (int y : {0, 1}) {
-        ValueTensor output_tensor = model({static_cast<double>(x), static_cast<double>(y)});
+        ValueTensor output_tensor = model({x, y});
         Value output = output_tensor[0][0];
-        Value error = ((x | y) - output);
+        Value error = ((x & y) - output);
         loss = loss + error * error;
       }
     }
@@ -47,7 +47,7 @@ int main() {
 
   for (int x : {0, 1}) {
     for (int y : {0, 1}) {
-      ValueTensor output_tensor = model({static_cast<double>(x), static_cast<double>(y)});
+      ValueTensor output_tensor = model({x, y});
       Value output = output_tensor[0][0];
 
       std::cout << "For input: " << x << " " << y << ", output is " << output.get_data() << std::endl;
