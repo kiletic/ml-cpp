@@ -16,6 +16,10 @@ target("value")
   set_kind("static")
   add_files("src/value.cpp")
 
+target("all")
+  set_kind("static")
+  add_files("src/*.cpp")
+
 target("test")
   set_default(false)
   set_kind("binary")
@@ -36,8 +40,8 @@ target("example_xor")
 
 target("main")
   set_kind("binary")
-  add_deps("value")
-  add_files("src/main.cpp")
+  add_deps("all")
+  add_files("examples/main.cpp")
   if is_mode("debug") then
     add_ldflags("-fsanitize=address", "-fsanitize=undefined")
   end
