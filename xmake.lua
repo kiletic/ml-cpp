@@ -31,6 +31,7 @@ target("test")
   end
 
 target("example_xor")
+  set_default(false)
   set_kind("binary")
   add_deps("value")
   add_files("examples/xor.cpp")

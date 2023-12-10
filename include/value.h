@@ -23,15 +23,23 @@ struct Value {
 
   Value operator+(scalar_t scalar);
   Value operator+(Value const &other);
+  Value& operator+=(scalar_t scalar);
+  Value& operator+=(Value const &other);
 
   Value operator-(scalar_t scalar);
   Value operator-(Value const &other);
+  Value& operator-=(scalar_t scalar);
+  Value& operator-=(Value const &other);
 
   Value operator*(scalar_t scalar);
   Value operator*(Value const &other);
+  Value& operator*=(scalar_t scalar);
+  Value& operator*=(Value const &other);
 
   Value operator/(scalar_t scalar);
   Value operator/(Value const &other);
+  Value& operator/=(scalar_t scalar);
+  Value& operator/=(Value const &other);
 
   Value sin();
   Value cos();

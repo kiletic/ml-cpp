@@ -29,6 +29,11 @@ Value Value::operator+(scalar_t scalar) {
   return *this + Value{scalar};
 }
 
+// val += [number]
+Value& Value::operator+=(scalar_t scalar) {
+  return *this = *this + Value{scalar};
+}
+
 // [number] + val
 Value operator+(scalar_t scalar, Value const &val) {
   return Value{scalar} + val;
@@ -49,9 +54,19 @@ Value Value::operator+(Value const &other) {
   return ret;
 }
 
+// val1 += val2
+Value& Value::operator+=(Value const &other) {
+  return *this = *this + other;
+}
+
 // val - [number]
 Value Value::operator-(scalar_t scalar) {
   return *this + Value{-scalar};
+}
+
+// val -= [number]
+Value& Value::operator-=(scalar_t scalar) {
+  return *this = *this - Value{scalar};
 }
 
 // [number] - val
@@ -73,9 +88,19 @@ Value Value::operator-(Value const &other) {
   return ret;
 }
 
+// val1 -= val2
+Value& Value::operator-=(Value const &other) {
+  return *this = *this - other;
+}
+
 // val * [number]
 Value Value::operator*(scalar_t scalar) {
   return *this * Value{scalar};
+}
+
+// val *= [number]
+Value& Value::operator*=(scalar_t scalar) {
+  return *this = *this * Value{scalar};
 }
 
 // [number] * val
@@ -97,9 +122,19 @@ Value Value::operator*(Value const &other) {
   return ret;
 }
 
+// val1 *= val2
+Value& Value::operator*=(Value const &other) {
+  return *this = *this * other;
+}
+
 // val / [number] 
 Value Value::operator/(scalar_t scalar) {
   return *this / Value{scalar};
+}
+
+// val /= [number]
+Value& Value::operator/=(scalar_t scalar) {
+  return *this = *this / Value{scalar};
 }
 
 // [number] / val
@@ -130,6 +165,11 @@ Value Value::operator/(Value const &other) {
   ret.internal->children.push_back(this->internal);
   ret.internal->children.push_back(other.internal);
   return ret;
+}
+
+// val1 /= val2
+Value& Value::operator/=(Value const &other) {
+  return *this = *this / other;
 }
 
 Value Value::sin() {
