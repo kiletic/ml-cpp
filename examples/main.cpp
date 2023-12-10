@@ -13,7 +13,7 @@ int main() {
     .add<ActivationLayer<ActivationFunc::relu>>()
     .add<LinearLayer>(2, 1);
 
-  auto output = model({1, 2, 3});
+  auto output = model({1, 2});
   for (auto const &x : output) {
     std::cout << x << std::endl;
   }
