@@ -15,6 +15,6 @@ struct NeuralNet {
     return *this;
   }
 
-  ValueTensor forward(ValueTensor&); 
-  ValueTensor operator()(ValueTensor&); 
+  ValueTensor forward(ValueTensor const&); 
+  ValueTensor operator()(ValueTensor const&); 
 };

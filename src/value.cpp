@@ -262,7 +262,7 @@ void Value::backward() {
     u->grad = 0;
 
   this->internal->grad = 1.0;
-  std::reverse(begin(topo), end(topo));
+  std::reverse(std::begin(topo), std::end(topo));
   for (ValueInternal *u : topo)
     u->propagate_grad();
 }

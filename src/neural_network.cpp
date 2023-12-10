@@ -4,12 +4,13 @@
 #include "value.h"
 #include "layer.h"
 
-ValueTensor NeuralNet::forward(ValueTensor &input) {
+ValueTensor NeuralNet::forward(ValueTensor const &input) {
+  ValueTensor output = input;
   for (auto &layer_ptr : this->network)
-    input = layer_ptr->forward(input);
-  return input;
+    output = layer_ptr->forward(output);
+  return output;
 }
 
-ValueTensor NeuralNet::operator()(ValueTensor &input) {
+ValueTensor NeuralNet::operator()(ValueTensor const &input) {
   return this->forward(input);
 }

@@ -12,4 +12,9 @@ int main() {
     .add<LinearLayer>(3, 2)
     .add<ActivationLayer<ActivationFunc::relu>>()
     .add<LinearLayer>(2, 1);
+
+  auto output = model({1, 2, 3});
+  for (auto const &x : output) {
+    std::cout << x << std::endl;
+  }
 }
