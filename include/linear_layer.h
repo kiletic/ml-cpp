@@ -7,8 +7,9 @@ struct LinearLayer : Layer {
   int in_dim;
   int out_dim;
   ValueTensor data; 
+  ValueTensor bias; 
   
-  LinearLayer(int _in_dim, int _out_dim);
+  LinearLayer(int _in_dim, int _out_dim, bool has_bias = true);
 
   std::vector<Value> get_parameters() override; 
   
