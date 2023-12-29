@@ -42,7 +42,6 @@ Value operator+(scalar_t scalar, Value const &val) {
 // val1 + val1
 Value Value::operator+(Value const &other) {
   Value ret{this->get_data() + other.get_data()};
-  // TODO: why is it memory leaking when capturing without get() and why it segfaults when capturing by reference (the smart ptr)?
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
                                   other_internal = other.internal.get(),
                                   ret_internal   = ret.internal.get()]() -> void {
@@ -240,13 +239,23 @@ Value Value::leaky_relu() {
   return ret;
 }
 
+Value Value::log() {
+  Value ret{std::log(this->get_data())};
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get()]() -> void {
+      this_internal->grad += ret_internal->grad / this_internal->data; 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
 void Value::backward() {
   auto topological_sort = [](ValueInternal *start_node) -> std::vector<ValueInternal*> { 
     std::vector<ValueInternal*> topo;
     std::set<ValueInternal*> visited;
     auto dfs = [&topo, &visited](auto self, ValueInternal *u) -> void {
       visited.insert(u);
-      for (std::shared_ptr<ValueInternal> v : u->children) 
+      for (std::shared_ptr<ValueInternal> &v : u->children) 
         if (!visited.contains(v.get()))
           self(self, v.get());
       topo.push_back(u);

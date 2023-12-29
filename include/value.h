@@ -44,6 +44,7 @@ struct Value {
   Value sin();
   Value cos();
   Value exp();
+  Value log();
   Value tanh();
   Value relu();
   Value leaky_relu();
