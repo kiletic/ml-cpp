@@ -47,6 +47,7 @@ struct Value {
   Value log();
   Value tanh();
   Value relu();
+  Value sigmoid();
   Value leaky_relu();
 
   scalar_t get_data() const;

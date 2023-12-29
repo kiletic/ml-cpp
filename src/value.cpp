@@ -249,6 +249,18 @@ Value Value::log() {
   return ret;
 }
 
+Value Value::sigmoid() {
+  scalar_t sigmoid_ = 1 / (1 + std::exp(-this->get_data()));
+  Value ret{sigmoid_};
+  ret.internal->propagate_grad = [this_internal = this->internal.get(), 
+                                  ret_internal  = ret.internal.get(),
+                                  sigmoid_]() -> void {
+      this_internal->grad += ret_internal->grad * sigmoid_ * (1 - sigmoid_); 
+  };
+  ret.internal->children.push_back(this->internal);
+  return ret;
+}
+
 void Value::backward() {
   auto topological_sort = [](ValueInternal *start_node) -> std::vector<ValueInternal*> { 
     std::vector<ValueInternal*> topo;

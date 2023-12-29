@@ -699,3 +699,37 @@ TEST(Backprop, Log2) {
   EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
   EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
 }
+
+TEST(Backprop, Sigmoid) {
+  Value a{2.0};
+  Value b{3.0};
+  Value ab = (a.sigmoid() * b.sigmoid()).sigmoid();
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = (t_a.sigmoid() * t_b.sigmoid()).sigmoid();
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
+
+TEST(Backprop, Sigmoid2) {
+  Value a{2.213213};
+  Value b{3.137127};
+  Value ab = (b * (a.sigmoid().sigmoid() + 5) * b.sigmoid()).sigmoid().sigmoid();
+
+  torch::Tensor t_a = torch::tensor(a.get_data(), torch::requires_grad());
+  torch::Tensor t_b = torch::tensor(b.get_data(), torch::requires_grad());
+  auto t_ab = (t_b * (t_a.sigmoid().sigmoid() + 5) * t_b.sigmoid()).sigmoid().sigmoid();
+
+  ab.backward();
+  t_ab.backward();
+    
+  EXPECT_NEAR(t_ab.data().item<scalar_t>(), ab.get_data(), eps);
+  EXPECT_NEAR(t_a.grad().item<scalar_t>(), a.get_grad(), eps);
+  EXPECT_NEAR(t_b.grad().item<scalar_t>(), b.get_grad(), eps);
+}
