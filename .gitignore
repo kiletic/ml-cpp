@@ -36,4 +36,4 @@ build/
 compile_commands*
 .xmake
 .cache
-.csv
+*.csv
