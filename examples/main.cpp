@@ -5,16 +5,18 @@
 #include "activation_layer.h"
 
 int main() {
-  NeuralNet model;
-  model
-    .add<LinearLayer>(2, 3)
-    .add<ActivationLayer<ActivationFunc::tanh>>()
-    .add<LinearLayer>(3, 2)
-    .add<ActivationLayer<ActivationFunc::relu>>()
-    .add<LinearLayer>(2, 1);
+  {
+    Value a = 2;
+    Value b = 3;
+    Value v = a + b + 1;
+    std::cout << v.internal.use_count() << std::endl;
+    std::cout << a.internal.use_count() << std::endl;
+    std::cout << b.internal.use_count() << std::endl;
+  }
 
-  auto output = model({1, 2});
-  for (auto const &x : output) {
-    std::cout << x << std::endl;
+  {
+    Value a = 2000;
+    Value b = 3000;
+    Value v = a + b + 5;
   }
 }

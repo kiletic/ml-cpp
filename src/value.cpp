@@ -1,11 +1,16 @@
 #include <cmath>
+#include <random>
 #include <set>
 #include <memory>
 
 #include "value.h"
 
 Value::Value() {
-  this->internal = std::make_shared<ValueInternal>((scalar_t)std::rand() / RAND_MAX);
+  static std::random_device rd;
+  static std::mt19937 gen(rd());
+  static std::uniform_real_distribution<> d(-1, 1);
+
+  this->internal = std::make_shared<ValueInternal>(d(gen));
 } 
 
 Value::Value(scalar_t val) {

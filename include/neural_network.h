@@ -16,6 +16,7 @@ struct NeuralNet {
   }
 
   std::vector<Value> get_parameters();
+  void initialize_weights(int dim_inp);
 
   ValueTensor forward(ValueTensor const&); 
   ValueTensor operator()(ValueTensor const&); 

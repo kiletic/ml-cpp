@@ -17,7 +17,7 @@ struct ValueTensor {
   // constructor for 1-D tensor
   template<typename T>
   inline ValueTensor(std::initializer_list<T> init_list) {
-    static_assert(std::is_integral_v<T>, "1-D tensor needs to have integral type");
+    static_assert(std::is_arithmetic_v<T>, "1-D tensor needs to have arithmetic type");
     if constexpr (std::is_same_v<T, scalar_t>)
       this->tensor.assign(1, std::vector<Value>{std::begin(init_list), std::end(init_list)});
     else {

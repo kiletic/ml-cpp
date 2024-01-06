@@ -6,7 +6,8 @@
 enum ActivationFunc {
   relu, 
   tanh, 
-  leaky_relu
+  leaky_relu,
+  sigmoid
 };
 
 template <ActivationFunc activation_func>
@@ -25,6 +26,8 @@ struct ActivationLayer : Layer {
         value = value.relu();
       else if constexpr (activation_func == ActivationFunc::tanh)
         value = value.tanh();
+      else if constexpr (activation_func == ActivationFunc::sigmoid)
+        value = value.sigmoid();
       else
         value = value.leaky_relu();
     }

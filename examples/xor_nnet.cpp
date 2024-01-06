@@ -12,13 +12,15 @@ int main() {
 
   NeuralNet model;
   model
-    .add<LinearLayer>(2, 2)
+    .add<LinearLayer>(2, 4)
     .add<ActivationLayer<ActivationFunc::tanh>>()
-    .add<LinearLayer>(2, 2)
+    .add<LinearLayer>(4, 4)
     .add<ActivationLayer<ActivationFunc::relu>>()
-    .add<LinearLayer>(2, 2)
+    .add<LinearLayer>(4, 2)
     .add<ActivationLayer<ActivationFunc::tanh>>()
     .add<LinearLayer>(2, 1);
+
+  // model.initialize_weights(2);
 
   // model
   //   .add<LinearLayer>(2, 10)
@@ -29,14 +31,14 @@ int main() {
 
   auto const &params = model.get_parameters();
 
-  scalar_t const eps = 1e-2;
+  scalar_t const eps = 1e-4;
   for (int its = 0; its < 100000; its++) {
     Value loss{0};
     for (int x : {0, 1}) {
       for (int y : {0, 1}) {
         ValueTensor output_tensor = model({x, y});
         Value output = output_tensor.value(); 
-        Value error = ((x ^ y) - output);
+        Value error = ((x & y) - output);
         loss += error * error;
       }
     }

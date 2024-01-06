@@ -18,7 +18,7 @@ target("value")
 
 target("all")
   set_kind("static")
-  add_files("src/*.cpp")
+  add_files("src/**.cpp")
 
 target("test")
   set_default(false)
@@ -44,6 +44,14 @@ target("example_xor_nnet")
   set_kind("binary")
   add_deps("all")
   add_files("examples/xor_nnet.cpp")
+  if is_mode("debug") then
+    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
+  end
+
+target("kaggle")
+  set_kind("binary")
+  add_deps("all")
+  add_files("examples/kaggle/main.cpp")
   if is_mode("debug") then
     add_ldflags("-fsanitize=address", "-fsanitize=undefined")
   end
