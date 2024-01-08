@@ -48,6 +48,16 @@ target("example_xor_nnet")
     add_ldflags("-fsanitize=address", "-fsanitize=undefined")
   end
 
+target("example_xor_torch")
+  set_default(false)
+  set_kind("binary")
+  add_packages("libtorch")
+  add_deps("all")
+  add_files("examples/xor_torch.cpp")
+  if is_mode("debug") then
+    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
+  end
+
 target("kaggle")
   set_kind("binary")
   add_deps("all")
