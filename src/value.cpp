@@ -30,7 +30,7 @@ void Value::set_data(scalar_t new_data) const {
 }
 
 // val + [number]
-Value Value::operator+(scalar_t scalar) {
+Value Value::operator+(scalar_t scalar) const {
   return *this + Value{scalar};
 }
 
@@ -45,7 +45,7 @@ Value operator+(scalar_t scalar, Value const &val) {
 }
 
 // val1 + val1
-Value Value::operator+(Value const &other) {
+Value Value::operator+(Value const &other) const {
   Value ret{this->get_data() + other.get_data()};
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
                                   other_internal = other.internal.get(),
@@ -64,7 +64,7 @@ Value& Value::operator+=(Value const &other) {
 }
 
 // val - [number]
-Value Value::operator-(scalar_t scalar) {
+Value Value::operator-(scalar_t scalar) const {
   return *this + Value{-scalar};
 }
 
@@ -79,7 +79,7 @@ Value operator-(scalar_t scalar, Value const &val) {
 }
 
 // val1 - val2
-Value Value::operator-(Value const &other) {
+Value Value::operator-(Value const &other) const {
   Value ret{this->get_data() - other.get_data()};
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
                                   other_internal = other.internal.get(),
@@ -98,7 +98,7 @@ Value& Value::operator-=(Value const &other) {
 }
 
 // val * [number]
-Value Value::operator*(scalar_t scalar) {
+Value Value::operator*(scalar_t scalar) const {
   return *this * Value{scalar};
 }
 
@@ -113,7 +113,7 @@ Value operator*(scalar_t scalar, Value const &val) {
 }
 
 // val1 * val2
-Value Value::operator*(Value const &other) {
+Value Value::operator*(Value const &other) const {
   Value ret{this->get_data() * other.get_data()};
   ret.internal->propagate_grad = [this_internal  = this->internal.get(), 
                                   other_internal = other.internal.get(),
@@ -132,7 +132,7 @@ Value& Value::operator*=(Value const &other) {
 }
 
 // val / [number] 
-Value Value::operator/(scalar_t scalar) {
+Value Value::operator/(scalar_t scalar) const {
   return *this / Value{scalar};
 }
 
@@ -147,7 +147,7 @@ Value operator/(scalar_t scalar, Value const &other) {
 }
 
 // val1 / val2
-Value Value::operator/(Value const &other) {
+Value Value::operator/(Value const &other) const {
   // z = x / y
   // df/dz
   // df/dx = df/dz * dz/dx
@@ -176,7 +176,7 @@ Value& Value::operator/=(Value const &other) {
   return *this = *this / other;
 }
 
-Value Value::sin() {
+Value Value::sin() const {
   Value ret{std::sin(this->get_data())};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
                                   ret_internal  = ret.internal.get()]() -> void {
@@ -186,7 +186,7 @@ Value Value::sin() {
   return ret;
 }
 
-Value Value::cos() {
+Value Value::cos() const {
   Value ret{std::cos(this->get_data())};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
                                   ret_internal  = ret.internal.get()]() -> void {
@@ -196,7 +196,7 @@ Value Value::cos() {
   return ret;
 }
 
-Value Value::exp() {
+Value Value::exp() const {
   auto exp_ = std::exp(this->get_data());
   Value ret{exp_};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
@@ -208,7 +208,7 @@ Value Value::exp() {
   return ret;
 }
 
-Value Value::tanh() {
+Value Value::tanh() const {
   auto tanh_ = std::tanh(this->get_data());
   Value ret{tanh_};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
@@ -220,7 +220,7 @@ Value Value::tanh() {
   return ret;
 }
 
-Value Value::relu() {
+Value Value::relu() const {
   auto relu_ = std::max<scalar_t>(0, this->get_data()); 
   Value ret{relu_};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
@@ -232,19 +232,20 @@ Value Value::relu() {
   return ret;
 }
 
-Value Value::leaky_relu() {
-  auto relu_ = std::max<scalar_t>(0.1 * this->get_data(), this->get_data()); 
+Value Value::leaky_relu() const {
+  scalar_t alpha = 0.2;
+  auto relu_ = std::max<scalar_t>(alpha * this->get_data(), this->get_data()); 
   Value ret{relu_};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
                                   ret_internal  = ret.internal.get(),
-                                  relu_]() -> void {
-    this_internal->grad += ret_internal->grad * (relu_ > 0 ? 1 : 0.1); 
+                                  relu_, alpha]() -> void {
+    this_internal->grad += ret_internal->grad * (relu_ > 0 ? 1 : alpha); 
   };
   ret.internal->children.push_back(this->internal);
   return ret;
 }
 
-Value Value::log() {
+Value Value::log() const {
   Value ret{std::log(this->get_data())};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
                                   ret_internal  = ret.internal.get()]() -> void {
@@ -254,7 +255,7 @@ Value Value::log() {
   return ret;
 }
 
-Value Value::sigmoid() {
+Value Value::sigmoid() const {
   scalar_t sigmoid_ = 1 / (1 + std::exp(-this->get_data()));
   Value ret{sigmoid_};
   ret.internal->propagate_grad = [this_internal = this->internal.get(), 
