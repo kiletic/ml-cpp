@@ -4,10 +4,10 @@
 #include "value_tensor.h"
 
 enum ActivationFunc {
-  relu, 
-  tanh, 
-  leaky_relu,
-  sigmoid
+  Relu, 
+  Tanh, 
+  Leaky_relu,
+  Sigmoid
 };
 
 template <ActivationFunc activation_func>
@@ -22,11 +22,11 @@ struct ActivationLayer : Layer {
 
   inline ValueTensor forward(ValueTensor &value_tensor) {
     for (Value &value : value_tensor) {
-      if constexpr (activation_func == ActivationFunc::relu)
+      if constexpr (activation_func == ActivationFunc::Relu)
         value = value.relu();
-      else if constexpr (activation_func == ActivationFunc::tanh)
+      else if constexpr (activation_func == ActivationFunc::Tanh)
         value = value.tanh();
-      else if constexpr (activation_func == ActivationFunc::sigmoid)
+      else if constexpr (activation_func == ActivationFunc::Sigmoid)
         value = value.sigmoid();
       else
         value = value.leaky_relu();

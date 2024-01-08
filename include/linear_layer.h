@@ -6,6 +6,7 @@
 struct LinearLayer : Layer {
   int in_dim;
   int out_dim;
+  bool has_bias;
   ValueTensor data; 
   ValueTensor bias; 
   

@@ -4,13 +4,13 @@
 #include "value.h"
 
 int main() {
-  srand(time(nullptr));
   std::cout << std::setprecision(8) << std::fixed;
 
   Value w11{}, w12{}, w13{};
   Value w21{}, w22{};
   Value w31{}, w32{};
-  Value b1{}, b2{}, b3{};
+  Value w41{};
+  Value b1{}, b2{}, b3{}, b4{};
 
   auto forward = [&](Value const &x, Value const &y) -> Value {
     Value W11 = (w11 * x + w11 * y + b1).tanh();
@@ -20,10 +20,12 @@ int main() {
     Value W21 = (w21 * W11 + w21 * W12 + w21 * W13 + b2).relu();
     Value W22 = (w22 * W11 + w22 * W12 + w22 * W13 + b2).relu();
 
-    Value W31 = (w31 * W21 + w31 * W22).tanh();
-    Value W32 = (w32 * W21 + w32 * W22).tanh();
+    Value W31 = (w31 * W21 + w31 * W22 + b3).tanh();
+    Value W32 = (w32 * W21 + w32 * W22 + b3).tanh();
 
-    return W31 + W32 + b3;
+    Value W41 = w41 * W31 + w41 * W32 + b4; 
+
+    return W41;
   };
 
   scalar_t const eps = 1e-2;
@@ -44,7 +46,7 @@ int main() {
     // zero_grad included
     loss.backward();
 
-    for (auto const &param : {w11, w12, w13, w21, w22, w31, w32, b1, b2, b3}) 
+    for (auto const &param : {w11, w12, w13, w21, w22, w31, w32, w41, b1, b2, b3, b4}) 
       param.set_data(param.get_data() - eps * param.get_grad());
   }
 

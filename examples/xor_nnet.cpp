@@ -5,41 +5,26 @@
 #include "linear_layer.h"
 #include "activation_layer.h"
 #include "value.h"
+#include "loss.h"
 
 int main() {
-  srand(time(nullptr));
   std::cout << std::setprecision(8) << std::fixed;
 
   NeuralNet model;
   model
-    .add<LinearLayer>(2, 4)
-    .add<ActivationLayer<ActivationFunc::tanh>>()
-    .add<LinearLayer>(4, 4)
-    .add<ActivationLayer<ActivationFunc::relu>>()
-    .add<LinearLayer>(4, 2)
-    .add<ActivationLayer<ActivationFunc::tanh>>()
+    .add<LinearLayer>(2, 2)
+    .add<ActivationLayer<ActivationFunc::Tanh>>()
     .add<LinearLayer>(2, 1);
 
-  // model.initialize_weights(2);
+  auto const params = model.get_parameters();
 
-  // model
-  //   .add<LinearLayer>(2, 10)
-  //   .add<ActivationLayer<ActivationFunc::tanh>>()
-  //   .add<LinearLayer>(10, 5)
-  //   .add<ActivationLayer<ActivationFunc::relu>>()
-  //   .add<LinearLayer>(5, 1);
-
-  auto const &params = model.get_parameters();
-
-  scalar_t const eps = 1e-4;
+  scalar_t const eps = 1e-3;
   for (int its = 0; its < 100000; its++) {
     Value loss{0};
     for (int x : {0, 1}) {
       for (int y : {0, 1}) {
         ValueTensor output_tensor = model({x, y});
-        Value output = output_tensor.value(); 
-        Value error = ((x & y) - output);
-        loss += error * error;
+        loss += Loss::squared_error(output_tensor.value(), x ^ y); 
       }
     }
 
