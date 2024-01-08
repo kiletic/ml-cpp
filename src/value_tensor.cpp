@@ -4,8 +4,14 @@
 #include "value_tensor.h"
 
 ValueTensor::ValueTensor(int _in_dim, int _out_dim, bool set_zero) : in_dim(_in_dim), out_dim(_out_dim) {
-  // TODO: ugly set_zero hack
-  this->tensor.assign(in_dim, std::vector(out_dim, (set_zero ? Value{0} : Value{})));
+  for (int i = 0; i < in_dim; i++)
+    this->tensor.push_back(std::vector<Value>(out_dim));
+
+  if (set_zero) {
+    for (int i = 0; i < in_dim; i++)
+      for (int j = 0; j < out_dim; j++)
+        this->tensor[i][j].set_data(0);
+  }
 }
 
 Value ValueTensor::value() const {
