@@ -6,11 +6,14 @@ add_rules("plugin.compile_commands.autoupdate")
 
 add_rules("mode.release", "mode.debug")
 if is_mode("debug") then
-  add_cxxflags("-fsanitize=address", "-fsanitize=undefined")
+  set_policy("build.sanitizer.address", true)
+  set_policy("build.sanitizer.undefined", true)
+else
+  -- so it doesn't reinstall packages with asan enabled...
+  -- TODO: how to resolve this? 
+  add_requires("gtest", { configs = { main = true }})
+  add_requires("libtorch")
 end
-
-add_requires("gtest", { configs = { main = true }})
-add_requires("libtorch")
 
 target("value")
   set_kind("static")
@@ -26,27 +29,18 @@ target("test")
   add_packages("gtest", "gtest_main", "libtorch")
   add_deps("value")
   add_files("tests/*.cpp")
-  if is_mode("debug") then
-    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
-  end
 
 target("example_xor")
   set_default(false)
   set_kind("binary")
   add_deps("value")
   add_files("examples/xor.cpp")
-  if is_mode("debug") then
-    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
-  end
 
 target("example_xor_nnet")
   set_default(false)
   set_kind("binary")
   add_deps("all")
   add_files("examples/xor_nnet.cpp")
-  if is_mode("debug") then
-    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
-  end
 
 target("example_xor_torch")
   set_default(false)
@@ -54,22 +48,13 @@ target("example_xor_torch")
   add_packages("libtorch")
   add_deps("all")
   add_files("examples/xor_torch.cpp")
-  if is_mode("debug") then
-    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
-  end
 
 target("kaggle")
   set_kind("binary")
   add_deps("all")
   add_files("examples/kaggle/main.cpp")
-  if is_mode("debug") then
-    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
-  end
 
 target("main")
   set_kind("binary")
   add_deps("all")
   add_files("examples/main.cpp")
-  if is_mode("debug") then
-    add_ldflags("-fsanitize=address", "-fsanitize=undefined")
-  end
