@@ -1,0 +1,6 @@
+target("test")
+  set_default(false)
+  set_kind("binary")
+  add_packages("gtest", "gtest_main", "libtorch")
+  add_deps("value")
+  add_files("*.cpp")

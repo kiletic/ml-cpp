@@ -15,7 +15,7 @@ ValueTensor::ValueTensor(int _in_dim, int _out_dim, bool set_zero) : in_dim(_in_
 }
 
 Value ValueTensor::value() const {
-  assert(in_dim == 1 && out_dim == 1 && "Cannot fetch Value from ValueTensor that has > 1 of them.");
+  assert(this->in_dim == 1 && this->out_dim == 1 && "Cannot fetch Value from ValueTensor that has > 1 of them.");
   return this->tensor[0][0];
 }
 

@@ -1,0 +1,18 @@
+target("example_xor")
+  set_default(false)
+  set_kind("binary")
+  add_deps("value")
+  add_files("xor.cpp")
+
+target("example_xor_nnet")
+  set_default(false)
+  set_kind("binary")
+  add_deps("all")
+  add_files("xor_nnet.cpp")
+
+target("example_xor_torch")
+  set_default(false)
+  set_kind("binary")
+  add_packages("libtorch")
+  add_deps("all")
+  add_files("xor_torch.cpp")
